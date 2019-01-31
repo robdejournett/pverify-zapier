@@ -35,7 +35,7 @@ module.exports = {
         }
       });
       var resp =  promise.then((response) => response.content);
-      resp.xNewField = "Bar";
+      //resp.xNewField = "Bar";
     
       return JSON.parse(resp);
       //return promise.then((response) => JSON.parse(response.content));
