@@ -8,9 +8,19 @@ const appTester = zapier.createAppTester(App);
 describe('My App', () => {
 
   it('should load recipes', (done) => {
-    const bundle = {};
+    const bundle = {"inputData": {
+      "elgRequestID": 2359468 }
+    };
+//console.log("App",  App);
+ //   console.log("xcreatesx" , App.creates);
+  //j  console.log("xgetEligibilityResponsex",App.creates.GetEligibilityResponse);
+    //console.log("xoperationx",App.triggers.recipe.operation);
+    //console.log("xperformx",App.creates.GetEligibilityResponse.operation.perform);
 
-    appTester(App.triggers.recipe.operation.perform, bundle)
+
+
+    //appTester(App.triggers.recipe.operation.perform, bundle)
+    appTester(App.creates.GetEligibilityResponse.operation.perform, bundle)
       .then(results => {
         should(results.length).above(1);
 

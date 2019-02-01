@@ -21,8 +21,9 @@ module.exports = {
       {key: 'demographicInfo__subscriber__firstname', label: 'xSubscriber First Name',type: 'string'},
       {key: 'networkSections[]identifier', label: 'xNetworkSectionsId',type: 'string'},
       {key: 'networkSections[]inNetworkParameters[]key', label: 'xNetworkSectionsKey',type: 'string'},
-      {key: 'networkSections[]inNetworkParameters[]value', label: 'xNetworkSectionsValue',type: 'string'}
-
+      {key: 'networkSections[]inNetworkParameters[]value', label: 'xNetworkSectionsValue',type: 'string'},
+      {key: 'zID', label: 'xID',type: 'string'}
+ 
 
     ], 
     perform: (z, bundle) => {
@@ -34,12 +35,39 @@ module.exports = {
           'content-type': 'application/json',
         }
       });
-      var resp =  promise.then((response) => response.content);
-      //resp.xNewField = "Bar";
-    
-      return JSON.parse(resp);
-      //return promise.then((response) => JSON.parse(response.content));
+      return promise.then(function(result) {
+         var data = JSON.parse(result.content);
+	 for (var i=0; i<data.networkSections.length; i++) {
+            for (var j=0; j<data.networkSections[i].inNetworkParameters.length; j++) {
+	       // DEDUCT
+	       if (data.networkSections[i].identifier == "Deductible" && 
+			       data.networkSections[i].inNetworkParameters[j].key == "Annual") 
+	         data["zAnnual Deductible"] = data.networkSections[i].inNetworkParameters[j].value;
+               if (data.networkSections[i].identifier == "Deductible" &&
+                               data.networkSections[i].inNetworkParameters[j].key == "Remaining")
+                 data["zRemaining Deductible"] = data.networkSections[i].inNetworkParameters[j].value;
+	       // OOP
+               if (data.networkSections[i].identifier == "OutOfPocket" &&
+                               data.networkSections[i].inNetworkParameters[j].key == "Maximum")
+                 data["zOOP Max"] = data.networkSections[i].inNetworkParameters[j].value;
+               if (data.networkSections[i].identifier == "OutOfPocket" &&
+                               data.networkSections[i].inNetworkParameters[j].key == "Remaining")
+                 data["zOOP Remaining"] = data.networkSections[i].inNetworkParameters[j].value;
+               // COPAY
+               if (data.networkSections[i].identifier == "Specialist" &&
+                               data.networkSections[i].inNetworkParameters[j].key == "Co-Ins")
+                 data["zSpecialist CoIns"] = data.networkSections[i].inNetworkParameters[j].value;
+               if (data.networkSections[i].identifier == "Specialist" &&
+                               data.networkSections[i].inNetworkParameters[j].key == "Co-Pay")
+                 data["zSpecialist CoPay"] = data.networkSections[i].inNetworkParameters[j].value;
+ 
+            } // inner for
+
+	 } // outer for
+         return data;
+	 });
     },
 
   }
 };
+
